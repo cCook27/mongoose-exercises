@@ -144,20 +144,95 @@ and your server is running do the following:
 /*Books
 ----------------------*/
 //1. Find books with fewer than 500 but more than 200 pages
+let queryPages = Book.find({pages: {$gt: 200, $lt: 500}});
+
+queryPages.exec().then(function(books) {
+  console.log(books);
+  console.log('------------------------------------------------');
+});
+
 
 //2. Find books whose rating is less than 5, and sort by the author's name
 
+let queryRating = Book.find({rating: {$gt: 1, $lt: 4}})
+  .sort('name')
+ 
+queryRating.exec().then(function(books) {
+  console.log(books);
+  console.log('------------------------------------------------');
+});
+
 //3. Find all the Fiction books, skip the first 2, and display only 3 of them
+let queryFiction = Book.find({genres: 'Fiction'})
+  .skip(2).limit(3)
+
+  queryFiction.exec().then(function(books) {
+  console.log(books);
+  console.log('------------------------------------------------');
+});
 
 
 /*People
 ----------------------*/
 //1. Find all the people who are tall (>180) AND rich (>30000)
 
+queryTallRich = Person.find({$and: [{height: {$gt: 181}}, {salary: {$gt: 30001}}]})
+
+queryTallRich.exec().then(function(people) {
+  console.log('TALL AND RICH');
+  console.log(people);
+  console.log('------------------------------------------------');
+});
 //2. Find all the people who are tall (>180) OR rich (>30000)
+
+queryTallorRich = Person.find({$or: [{height: {$gt: 181}}, {salary: {$gt: 30001}}]})
+
+queryTallorRich.exec().then(function(people) {
+  console.log('TALL OR RICH');
+  console.log(people);
+  console.log('------------------------------------------------');
+});
 
 //3. Find all the people who have grey hair or eyes, and who's weight (<70)
 
+queryGreyandWeight = Person.find({$and: [
+  {$or: [{hair: 'grey'}, {eyes: 'grey'}]}, 
+  {weight: {$lt: 69.99}}
+]});
+
+queryGreyandWeight.exec().then(function(people) {
+  console.log(people);
+  console.log('Grey eyes or hair and weight less than 70');
+  console.log('------------------------------------------------');
+});
+
 //4. Find people who have at least 1 kid with grey hair
 
+queryGreyKids = Person.find({$and: [
+  {numKids: {$gt: 0}},
+  {hair: 'grey'}
+]});
+
+queryGreyKids.exec().then(function(people) {
+  console.log(people);
+  console.log('Grey hair and kids');
+  console.log('------------------------------------------------');
+});
+
 //5. Find all the people who have at least one kid who's weight is >100 and themselves' weight is >100
+
+queryKidsandWeight = Person.find({
+  $and: [
+    {numKids: {$gt: 0}},
+    {kids: {$elemMatch: {weight: {$gt: 100}}}},
+    {weight: {$gt: 100}}
+  ]
+});
+
+queryKidsandWeight.exec().then(function(people) {
+  console.log(people)
+  console.log('kids and weight');
+  console.log('------------------------------------------------');
+});
+
+//the people variable is an array of each person object that fit the criteria. If you were to say people.kids. It has no idea what you're talking about because it's an array of persons. person.kids would work because it's a person object
